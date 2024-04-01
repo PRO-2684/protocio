@@ -1,0 +1,32 @@
+{
+    "manifest_version": 4,
+    "type": "framework",
+    "name": "Protocio",
+    "slug": "protocio",
+    "description": "注册自定义协议，将链接交付给对应插件处理",
+    "version": "0.1.0",
+    "icon": "./icons/icon.svg",
+    "thumb": "",
+    "authors": [
+        {
+            "name": "PRO-2684",
+            "link": "https://github.com/PRO-2684"
+        }
+    ],
+    "repository": {
+        "repo": "PRO-2684/protocio",
+        "branch": "main",
+        "release": {
+            "tag": "v0.1.0",
+            "file": "protocio-release.zip"
+        }
+    },
+    "platform": [
+        "win32",
+        "linux",
+        "darwin"
+    ],
+    "injects": {
+        "main": "./main.js"
+    }
+}
