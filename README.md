@@ -1,16 +1,20 @@
 <img src="./icons/icon.svg" align="right" style="width: 6em; height: 6em;"></img>
 
-# Protocio
+# 🚚 Protocio
 
 [LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT) 插件，用于注册自定义协议，然后将链接交付给对应插件处理。
 
 ## 🪄 具体功能
 
-TODO
-
-## 🖼️ 截图
-
-TODO
+- 协议注册：注册 `llqqnt://` 协议，当在浏览器中点击这种链接时，便会唤起 QQ
+- 链接交付：此插件得知 `llqqnt://<slug>/...` 链接被点击时，会调用链接指定的插件 (`slug`) 来处理此事件
+- 内置处理器：此插件亦注册了一个处理器，用于处理 `llqqnt://protocio/` 链接
+    - [`ping`](llqqnt://protocio/ping)：在控制台输出 `pong`，用于测试
+    - `quit/<second>`：在指定秒数后退出 QQNT，未指定或小于等于 0 则立即退出 (e.g. [`llqqnt://protocio/quit/5`](llqqnt://protocio/quit/5))
+    - `restart/<second>`：在指定秒数后重启 QQNT，未指定或小于等于 0 则立即重启 (e.g. [`llqqnt://protocio/restart/5`](llqqnt://protocio/restart/5))
+    - [`register`](llqqnt://protocio/register)：注册 `llqqnt://` 协议 (通常来说没有用，因为要成功调用的话已经注册了，除非使用命令行 `QQ.exe llqqnt://protocio/register`)
+    - [`unregister`](llqqnt://protocio/unregister)：注销 `llqqnt://` 协议 (由于实现原因，可能不生效；注销后若需再次注册则需要重启 QQNT 或使用上述命令行)
+    - 其它：其它命令会在控制台输出 `Unknown command: <args>`，用于调试 (e.g. [`llqqnt://protocio/non/exist/command`](llqqnt://protocio/non/exist/command))
 
 ## 📥 安装
 
@@ -35,7 +39,16 @@ plugins (所有的插件目录)
 
 ## 🤔 使用方法
 
-TODO
+```javascript
+app.whenReady().then(() => {
+    LiteLoader.api.registerUrlHandler("<slug>", (rest, url) => {
+        // rest: URL 剩余部分的数组，空值被过滤
+        //     e.g. llqqnt://<slug>/a/b//c => ["a", "b", "c"]
+        // url: 完整的 URL，通常不需要使用
+        doSomething(); // 处理...
+    }
+});
+```
 
 ## 💻 调试
 

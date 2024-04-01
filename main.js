@@ -4,7 +4,7 @@ const lock = app.requestSingleInstanceLock();
 const protocol = "llqqnt";
 const isDebug = process.argv.includes("--protocio-debug");
 const log = console.log.bind(console, "\x1b[31m%s\x1b[0m", "[Protocio]");
-const debug = isDebug ? log : () => { };
+const debug = isDebug ? console.debug.bind(console, "\x1b[31m%s\x1b[0m", "[Protocio]") : () => { };
 const handlers = new Map();
 
 LiteLoader.api.registerUrlHandler = (slug, handler) => {
@@ -55,13 +55,13 @@ function unregisterProtocol() {
 function handleUrl(url) {
     log(`Handling URL: "${url}"`);
     const trimmed = url.slice(protocol.length + 3);
-    const args = trimmed.split("/");
+    const args = trimmed.split("/").filter((arg) => arg); // Remove empty strings
     const slug = args[0];
     const rest = args.slice(1);
     const handler = handlers.get(slug);
     if (handler) {
         try {
-            handler(rest);
+            handler(rest, url);
         } catch (error) {
             log(`Error while handling "${url}":`, error);
         }
@@ -80,6 +80,17 @@ function handleArgv(argv) {
     }
 }
 
+function delay(second, callback) {
+    if (!second instanceof Number) {
+        second = parseFloat(second);
+    }
+    if (isNaN(second) || second <= 0) {
+        callback();
+    } else {
+        setTimeout(callback, second * 1000);
+    }
+}
+
 app.whenReady().then(() => {
     registerProtocol();
     app.on("second-instance", (event, argv, workingDirectory) => {
@@ -91,25 +102,24 @@ app.whenReady().then(() => {
         event.preventDefault();
         handleUrl(url);
     });
+    const protocioHandler = {
+        "ping": () => { log("pong"); },
+        "quit": (args) => { delay(args[0], app.quit); },
+        "restart": (args) => {
+            app.relaunch();
+            delay(args[0], app.quit);
+        },
+        "register": registerProtocol,
+        "unregister": unregisterProtocol,
+    };
     LiteLoader.api.registerUrlHandler("protocio", (rest) => {
-        switch (rest[0]) {
-            case "ping":
-                log("pong");
-                break;
-            case "quit": {
-                const timeout = parseInt(rest[1]);
-                if (timeout && !isNaN(timeout) && timeout > 0) {
-                    setTimeout(() => {
-                        app.quit();
-                    }, timeout * 1000);
-                } else {
-                    app.quit();
-                }
-                break;
-            }
-            default:
-                log("Unknown command:", rest);
-                break;
+        const command = rest[0];
+        const args = rest.slice(1);
+        const handler = protocioHandler[command];
+        if (handler) {
+            handler(args);
+        } else {
+            log("Unknown command:", rest);
         }
     });
     setTimeout(() => {
