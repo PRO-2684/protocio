@@ -3,15 +3,17 @@ const { app } = require("electron");
 const lock = app.requestSingleInstanceLock();
 const protocol = "llqqnt";
 const isDebug = process.argv.includes("--protocio-debug");
-const log = console.log.bind(console, "\x1b[31m%s\x1b[0m", "[Protocio]");
-const debug = isDebug ? console.debug.bind(console, "\x1b[31m%s\x1b[0m", "[Protocio]") : () => { };
+const log = console.log.bind(console, "\x1b[38;2;0;101;72m%s\x1b[0m", "[Protocio]");
+const debug = isDebug ? console.debug.bind(console, "\x1b[38;2;0;101;72m%s\x1b[0m", "[Protocio]") : () => { };
 const handlers = new Map();
 
 LiteLoader.api.registerUrlHandler = (slug, handler) => {
     handlers.set(slug, handler);
+    debug(`Registered handler for "${slug}".`);
 };
 LiteLoader.api.unregisterUrlHandler = (slug) => {
     handlers.delete(slug);
+    debug(`Unregistered handler for "${slug}".`);
 };
 
 function containsProtocol(argv) {
@@ -111,6 +113,9 @@ app.whenReady().then(() => {
         },
         "register": registerProtocol,
         "unregister": unregisterProtocol,
+        "list": () => {
+            log("Registered handlers:", ...handlers.keys());
+        }
     };
     LiteLoader.api.registerUrlHandler("protocio", (rest) => {
         const command = rest[0];
@@ -119,7 +124,7 @@ app.whenReady().then(() => {
         if (handler) {
             handler(args);
         } else {
-            log("Unknown command:", rest);
+            log("Unknown command:", command);
         }
     });
     setTimeout(() => {
