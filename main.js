@@ -5,16 +5,6 @@ const protocol = "llqqnt";
 const isDebug = process.argv.includes("--protocio-debug");
 const log = console.log.bind(console, "\x1b[38;2;0;101;72m%s\x1b[0m", "[Protocio]");
 const debug = isDebug ? console.debug.bind(console, "\x1b[38;2;0;101;72m%s\x1b[0m", "[Protocio]") : () => { };
-const handlers = new Map();
-
-LiteLoader.api.registerUrlHandler = (slug, handler) => {
-    handlers.set(slug, handler);
-    debug(`Registered handler for "${slug}".`);
-};
-LiteLoader.api.unregisterUrlHandler = (slug) => {
-    handlers.delete(slug);
-    debug(`Unregistered handler for "${slug}".`);
-};
 
 function containsProtocol(argv) {
     const url = argv[argv.length - 1];
@@ -25,6 +15,17 @@ if (!lock && containsProtocol(process.argv)) {
     log("Refusing to start second instance - URL already handled.")
     app.quit();
 }
+
+const handlers = new Map();
+
+LiteLoader.api.registerUrlHandler = (slug, handler) => {
+    handlers.set(slug, handler);
+    debug(`Registered handler for "${slug}".`);
+};
+LiteLoader.api.unregisterUrlHandler = (slug) => {
+    handlers.delete(slug);
+    debug(`Unregistered handler for "${slug}".`);
+};
 
 function registerProtocol() {
     if (app.isDefaultProtocolClient(protocol)) {
