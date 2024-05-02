@@ -40,9 +40,10 @@ plugins (所有的插件目录)
 
 ## 🤔 使用方法
 
-- 在您的插件主进程中，使用 `LiteLoader.api.registerUrlHandler(name, callback)` 注册您的网址处理器。
-    - `name` 为您的 URL 处理器名，通常建议直接使用您的插件的标识符 `slug`。
-    - `callback: (rest, url) => {}` 为回调函数。传入两个参数，分别为 URL 剩余部分的数组和完整的 URL。通常只需要使用第一个参数。
+在您的插件主进程中，在 `app.whenReady` 后使用 `LiteLoader.api.registerUrlHandler(name, callback)` 注册您的网址处理器。(若直接使用 `LiteLoader.api.registerUrlHandler`，会导致注册是否成功取决于 Protocio 和您的插件的加载顺序)
+
+- `name` 为您的 URL 处理器名，通常建议直接使用您的插件的标识符 `slug`。
+- `callback: (rest, url) => {}` 为回调函数。传入两个参数，分别为 URL 剩余部分的数组和完整的 URL。通常只需要使用第一个参数。
 
 ```javascript
 const { app } = require("electron");
