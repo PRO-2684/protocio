@@ -40,10 +40,15 @@ plugins (所有的插件目录)
 
 ## 🤔 使用方法
 
-在您的插件主进程中，在 `app.whenReady` 后使用 `LiteLoader.api.registerUrlHandler(name, callback)` 注册您的网址处理器。(若直接使用 `LiteLoader.api.registerUrlHandler`，会导致注册是否成功取决于 Protocio 和您的插件的加载顺序)
+### 注册 URL 处理器
 
-- `name` 为您的 URL 处理器名，通常建议直接使用您的插件的标识符 `slug`。
-- `callback: (rest, url) => {}` 为回调函数。传入两个参数，分别为 URL 剩余部分的数组和完整的 URL。通常只需要使用第一个参数。
+在您的插件主进程中，在 `app.whenReady` 后使用 `LiteLoader.api.registerUrlHandler(slug, handler, force)` 注册您的网址处理器。若直接使用 `LiteLoader.api.registerUrlHandler`，会导致注册是否成功取决于 Protocio 和您的插件的加载顺序。此函数接受三个参数：
+
+- `slug` 为您的 URL 处理器名，通常建议直接使用您的插件的标识符。
+- `handler: (rest, url) => {}` 为回调函数。传入两个参数，分别为 URL 剩余部分的数组和完整的 URL。通常只需要使用第一个参数。
+- `force: boolean` 为可选参数。当 *尝试注册已经注册过的处理器* 时，若为 `true` 则强制覆盖，否则出错。默认为 `false`。
+
+此函数的返回值为一个对象，通过 `success` 键表示注册是否成功，通过 `message` 键提供相关提示消息。具体会返回什么提示消息请参考 [`main.js`](https://github.com/PRO-2684/protocio/blob/main/main.js) 中 `LiteLoader.api.registerUrlHandler =` 开头的函数定义。以下是一段代码示例：
 
 ```javascript
 const { app } = require("electron");
@@ -56,6 +61,15 @@ app.whenReady().then(() => {
     });
 });
 ```
+
+### 注销 URL 处理器
+
+在您的插件主进程中，使用 `LiteLoader.api.unregisterUrlHandler(slug, ignore)` 注销您的网址处理器。此函数接受两个参数：
+
+- `slug` 为您的 URL 处理器名，通常建议直接使用您的插件的标识符。
+- `ignore: boolean` 为可选参数，若为 `true` 则忽略 *尝试注销不存在的处理器* 导致的错误。默认为 `false`。
+
+此函数的返回值为一个对象，通过 `success` 键表示注销是否成功，通过 `message` 键提供相关提示消息。具体会返回什么提示消息请参考 [`main.js`](https://github.com/PRO-2684/protocio/blob/main/main.js) 中 `LiteLoader.api.unregisterUrlHandler =` 开头的函数定义。由于通常不需要注销处理器，此处不提供代码示例。
 
 ## ⚠️ 注意事项
 

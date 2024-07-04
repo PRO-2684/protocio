@@ -18,13 +18,27 @@ if (!lock && containsProtocol(process.argv)) {
 
 const handlers = new Map();
 
-LiteLoader.api.registerUrlHandler = (slug, handler) => {
+LiteLoader.api.registerUrlHandler = (slug, handler, force=false) => {
+    if (handlers.has(slug) && !force) { // Trying to register an existing handler
+        const msg = `Handler for "${slug}" already registered.`;
+        debug(msg);
+        return { success: false, message: msg };
+    }
     handlers.set(slug, handler);
-    debug(`Registered handler for "${slug}".`);
+    const msg = `Registered handler for "${slug}".`;
+    debug(msg);
+    return { success: true, message: msg };
 };
-LiteLoader.api.unregisterUrlHandler = (slug) => {
+LiteLoader.api.unregisterUrlHandler = (slug, ignore=false) => {
+    if (!handlers.has(slug) && !ignore) { // Trying to unregister a non-existing handler
+        const msg = `No handler registered for "${slug}".`;
+        debug(msg);
+        return { success: false, message: msg };
+    }
     handlers.delete(slug);
-    debug(`Unregistered handler for "${slug}".`);
+    const msg = `Unregistered handler for "${slug}".`;
+    debug(msg);
+    return { success: true, message: msg };
 };
 
 function registerProtocol() {
