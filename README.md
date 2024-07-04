@@ -19,9 +19,9 @@
 
 ## 📥 安装
 
-### ~~插件商店~~
+### 自动安装
 
-~~在插件商店中找到 Protocio 并安装。~~
+在 [插件安装器](https://github.com/xinyihl/LiteLoaderQQNT-PluginInstaller) 或 [插件列表查看](https://github.com/ltxhhz/LL-plugin-list-viewer) 中找到 Protocio 并安装。
 
 ### 手动安装
 
