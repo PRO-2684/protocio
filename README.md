@@ -78,3 +78,7 @@ app.whenReady().then(() => {
 ## 💻 调试
 
 Debug 模式：若您想要调试**此插件本身**，可以使用 `--protocio-debug` 参数启动 QQNT，此时插件会在控制台输出更详细的调试信息。
+
+## ⭐ Star History
+
+[![Stargazers over time](https://starchart.cc/PRO-2684/protocio.svg?variant=adaptive)](https://starchart.cc/PRO-2684/protocio)
