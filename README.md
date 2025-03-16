@@ -2,6 +2,9 @@
 
 # 🚚 Protocio
 
+> [!NOTE]
+> 最近风控较为严格，作者的账号也没有幸免，现在无法在电脑上登录与调试。因此此插件暂停维护。
+
 [LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT) 插件，用于注册自定义协议，然后将链接交付给对应插件处理。
 
 ## 🪄 具体功能
